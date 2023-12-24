@@ -1,6 +1,6 @@
 # ruby-course-projects
 
-These exercises are from The [Odin Project(https://www.theodinproject.com)]'s Ruby curriculum.
+These exercises are from The [Odin Project](https://www.theodinproject.com)'s Ruby curriculum.
 
 Comprehensive Ruby course! This structure covers a wide range of topics, from the basics of Ruby programming to more advanced concepts like object-oriented programming, file handling, and algorithm implementation. Here's a breakdown of each section:
 
