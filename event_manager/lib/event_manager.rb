@@ -31,6 +31,21 @@ def save_thank_you_letter(id,form_letter)
   end
 end
 
+def clean_phone_number(phone)
+  # Remove non-digit characters
+  cleaned_number = phone.to_s.gsub(/\D/, '')
+
+  # Validate and format the phone number
+  case cleaned_number.length
+  when 10
+    cleaned_number
+  when 11
+    cleaned_number[0] == '1' ? cleaned_number[1..-1] : 'Bad Number'
+  else
+    'Bad Number'
+  end
+end
+
 puts 'EventManager initialized.'
 
 contents = CSV.open(
@@ -42,11 +57,20 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 
+hour_counts = Hash.new(0)
+day_counts = Hash.new(0)
+
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
+
+  # Assignments
+  phone = clean_phone_number(row[:homephone])
+  registration_time = DateTime.strptime(row[:regdate], '%m/%d/%y %H:%M')
+  registration_hour = registration_time.hour
+  registration_day = registration_time.wday
 
   form_letter = erb_template.result(binding)
 
