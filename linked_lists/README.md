@@ -27,29 +27,29 @@ This is a simple implementation of a linked list in Ruby, consisting of two clas
 
 3. **Manipulating the Linked List:**
 
-```ruby
-linked_list.pop
-puts "After pop:"
-puts "Linked List: #{linked_list.to_s}"
-```
+   ```ruby
+   linked_list.pop
+   puts "After pop:"
+   puts "Linked List: #{linked_list.to_s}"
+   ```
 
 4. **Searching and Modifying:**
 
-```ruby
-puts "Contains 2? #{linked_list.contains?(2)}"
-puts "Find index of 1.5: #{linked_list.find(1.5)}"
+   ```ruby
+   puts "Contains 2? #{linked_list.contains?(2)}"
+   puts "Find index of 1.5: #{linked_list.find(1.5)}"
 
-linked_list.remove_at(1)
-puts "After removing element at index 1:"
-puts "Linked List: #{linked_list.to_s}"
-```
+   linked_list.remove_at(1)
+   puts "After removing element at index 1:"
+   puts "Linked List: #{linked_list.to_s}"
+   ```
 
 5. **Extra Credit:**
 
-```ruby
-linked_list.insert_at(1.5, 2)
-linked_list.remove_at(1)
-```
+   ```ruby
+   linked_list.insert_at(1.5, 2)
+   linked_list.remove_at(1)
+   ```
 ## Methods
 
 1. **LinkedList Class Methods:**
