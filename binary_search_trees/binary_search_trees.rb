@@ -31,6 +31,12 @@ class Tree
     @root = build_tree(array)
   end
 
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
+
   private
 
   def build_tree(array)
@@ -61,3 +67,6 @@ tree = Tree.new(values)
 root_node = tree.root
 
 # You now have a balanced binary search tree based on the provided array
+
+# Print the visual representation of the tree
+tree.pretty_print
