@@ -37,6 +37,58 @@ class Tree
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
+  def insert(value)
+    @root = insert_recursive(@root, value)
+  end
+
+  def delete(value)
+    @root = delete_recursive(@root, value)
+  end
+
+  private
+
+  def insert_recursive(node, value)
+    return Node.new(value) if node.nil?
+
+    if value < node.data
+      node.left = insert_recursive(node.left, value)
+    elsif value > node.data
+      node.right = insert_recursive(node.right, value)
+    end
+
+    node
+  end
+
+  def delete_recursive(node, value)
+    return node if node.nil?
+
+    if value < node.data
+      node.left = delete_recursive(node.left, value)
+    elsif value > node.data
+      node.right = delete_recursive(node.right, value)
+    else
+      # Node to be deleted found
+
+      if node.left.nil?
+        return node.right
+      elsif node.right.nil?
+        return node.left
+      end
+
+      # Node has two children, find the in-order successor (smallest node in the right subtree)
+      node.data = find_min_value(node.right)
+      node.right = delete_recursive(node.right, node.data)
+    end
+
+    node
+  end
+
+  def find_min_value(node)
+    current = node
+    current = current.left until current.left.nil?
+    current.data
+  end
+
   private
 
   def build_tree(array)
@@ -60,13 +112,21 @@ class Tree
 end
 
 # Example usage
-values = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-tree = Tree.new(values)
+tree = Tree.new([8, 3, 10, 1, 6, 14, 4, 7, 13])
+
+puts "Original tree:"
+tree.pretty_print
+
+puts "\nInserting 9:"
+tree.insert(9)
+tree.pretty_print
+
+puts "\nDeleting 6:"
+tree.delete(6)
+tree.pretty_print
 
 # Access the root of the tree
 root_node = tree.root
-
-# You now have a balanced binary search tree based on the provided array
 
 # Print the visual representation of the tree
 tree.pretty_print
