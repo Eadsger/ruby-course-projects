@@ -45,8 +45,6 @@ class Tree
     @root = delete_recursive(@root, value)
   end
 
-  private
-
   def insert_recursive(node, value)
     return Node.new(value) if node.nil?
 
@@ -89,6 +87,24 @@ class Tree
     current.data
   end
 
+  def find(value)
+    find_recursive(@root, value)
+  end
+
+  private
+
+  def find_recursive(node, value)
+    return nil if node.nil?
+
+    if value == node.data
+      return node
+    elsif value < node.data
+      return find_recursive(node.left, value)
+    else
+      return find_recursive(node.right, value)
+    end
+  end
+
   private
 
   def build_tree(array)
@@ -124,6 +140,14 @@ tree.pretty_print
 puts "\nDeleting 6:"
 tree.delete(6)
 tree.pretty_print
+
+found_node = tree.find(10)
+
+if found_node
+  puts "Node with value 6 found: #{found_node.data}"
+else
+  puts "Node with value 6 not found."
+end
 
 # Access the root of the tree
 root_node = tree.root
