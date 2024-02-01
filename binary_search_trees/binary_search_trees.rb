@@ -56,8 +56,8 @@ end
 # Example usage
 values = [8, 3, 10, 1, 6, 14, 4, 7, 13]
 tree = Tree.new(values)
-puts tree.inspect
+
 # Access the root of the tree
 root_node = tree.root
-puts root_node.inspect
+
 # You can now perform operations on the tree, such as traversals, searching, etc.
