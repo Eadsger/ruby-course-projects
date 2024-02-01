@@ -37,7 +37,7 @@ class Tree
     return nil if array.empty?
 
     sorted_array = array.uniq.sort
-    build_tree_recursive(sorted_array)
+    @root = build_tree_recursive(sorted_array)
   end
 
   def build_tree_recursive(array)
@@ -54,10 +54,10 @@ class Tree
 end
 
 # Example usage
-values = [8, 3, 10, 1, 6, 14, 4, 7, 13]
+values = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 tree = Tree.new(values)
 
 # Access the root of the tree
 root_node = tree.root
 
-# You can now perform operations on the tree, such as traversals, searching, etc.
+# You now have a balanced binary search tree based on the provided array
