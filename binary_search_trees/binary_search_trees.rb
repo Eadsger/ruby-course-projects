@@ -1,3 +1,4 @@
+# Node class
 class Node
   include Comparable
 
@@ -9,26 +10,27 @@ class Node
     @right = nil
   end
 
-  def <=>(other_node)
-    # Compare nodes based on their data attribute
-    @data <=> other_node.data
+  def <=>(other)
+    @data <=> other.data
   end
 end
 
-# Example usage
-node1 = Node.new(5)
-node2 = Node.new(3)
-node3 = Node.new(7)
-
-puts node1 > node2  # Output: true
-puts node1 < node3  # Output: true
-puts node2 == node3 # Output: false
-
+# Tree class
 class Tree
   attr_accessor :root
 
-  def initialize(array)
-    @root = build_tree(array)
+  def initialize(arr)
+    @root = build_tree(arr.uniq.sort)
+  end
+
+  def build_tree(arr)
+    return nil if arr.empty?
+
+    mid = arr.length / 2
+    root = Node.new(arr[mid])
+    root.left = build_tree(arr[0...mid])
+    root.right = build_tree(arr[mid + 1..-1])
+    root
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -37,120 +39,186 @@ class Tree
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
-  def insert(value)
-    @root = insert_recursive(@root, value)
-  end
+  def insert(value, node = @root)
+    return Node.new(value) unless node
 
-  def delete(value)
-    @root = delete_recursive(@root, value)
-  end
-
-  def insert_recursive(node, value)
-    return Node.new(value) if node.nil?
-
-    if value < node.data
-      node.left = insert_recursive(node.left, value)
-    elsif value > node.data
-      node.right = insert_recursive(node.right, value)
+    case value <=> node.data
+    when -1
+      node.left = insert(value, node.left)
+    when 1
+      node.right = insert(value, node.right)
     end
 
     node
   end
 
-  def delete_recursive(node, value)
-    return node if node.nil?
+  def delete(value, node = @root)
+    return nil unless node
 
-    if value < node.data
-      node.left = delete_recursive(node.left, value)
-    elsif value > node.data
-      node.right = delete_recursive(node.right, value)
+    case value <=> node.data
+    when -1
+      node.left = delete(value, node.left)
+    when 1
+      node.right = delete(value, node.right)
     else
-      # Node to be deleted found
+      return node.right unless node.left
+      return node.left unless node.right
 
-      if node.left.nil?
-        return node.right
-      elsif node.right.nil?
-        return node.left
-      end
-
-      # Node has two children, find the in-order successor (smallest node in the right subtree)
-      node.data = find_min_value(node.right)
-      node.right = delete_recursive(node.right, node.data)
+      temp = find_min(node.right)
+      node.data = temp.data
+      node.right = delete(temp.data, node.right)
     end
 
     node
   end
 
-  def find_min_value(node)
+  def find(value, node = @root)
+    return nil unless node
+
+    case value <=> node.data
+    when -1
+      find(value, node.left)
+    when 0
+      node
+    when 1
+      find(value, node.right)
+    end
+  end
+
+  def level_order(&block)
+    return [] unless @root
+
+    queue = [@root]
+    result = []
+    while !queue.empty?
+      current = queue.shift
+      block_given? ? yield(current) : result.push(current.data)
+      queue.push(current.left) if current.left
+      queue.push(current.right) if current.right
+    end
+
+    result
+  end
+
+  def inorder(node = @root, &block)
+    return [] unless node
+
+    result = []
+    result += inorder(node.left, &block) if node.left
+    block_given? ? yield(node) : result.push(node.data)
+    result += inorder(node.right, &block) if node.right
+
+    result
+  end
+
+  def preorder(node = @root, &block)
+    return [] unless node
+
+    result = []
+    block_given? ? yield(node) : result.push(node.data)
+    result += preorder(node.left, &block) if node.left
+    result += preorder(node.right, &block) if node.right
+
+    result
+  end
+
+  def postorder(node = @root, &block)
+    return [] unless node
+
+    result = []
+    result += postorder(node.left, &block) if node.left
+    result += postorder(node.right, &block) if node.right
+    block_given? ? yield(node) : result.push(node.data)
+
+    result
+  end
+
+  def height(node = @root)
+    return -1 unless node
+
+    [height(node.left), height(node.right)].max + 1
+  end
+
+  def depth(value, node = @root, depth = 0)
+    return -1 unless node
+
+    case value <=> node.data
+    when -1
+      depth(value, node.left, depth + 1)
+    when 0
+      depth
+    when 1
+      depth(value, node.right, depth + 1)
+    end
+  end
+
+  def balanced?(node = @root)
+    return true unless node
+
+    (height(node.left) - height(node.right)).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+  end
+
+  def rebalance
+    values = inorder
+    @root = build_tree(values)
+  end
+
+  private
+
+  def find_min(node)
     current = node
-    current = current.left until current.left.nil?
-    current.data
-  end
-
-  def find(value)
-    find_recursive(@root, value)
-  end
-
-  private
-
-  def find_recursive(node, value)
-    return nil if node.nil?
-
-    if value == node.data
-      return node
-    elsif value < node.data
-      return find_recursive(node.left, value)
-    else
-      return find_recursive(node.right, value)
-    end
-  end
-
-  private
-
-  def build_tree(array)
-    return nil if array.empty?
-
-    sorted_array = array.uniq.sort
-    @root = build_tree_recursive(sorted_array)
-  end
-
-  def build_tree_recursive(array)
-    return nil if array.empty?
-
-    mid_index = array.length / 2
-    root = Node.new(array[mid_index])
-
-    root.left = build_tree_recursive(array[0...mid_index])
-    root.right = build_tree_recursive(array[(mid_index + 1)..-1])
-
-    root
+    current = current.left while current.left
+    current
   end
 end
 
-# Example usage
-tree = Tree.new([8, 3, 10, 1, 6, 14, 4, 7, 13])
+# Driver script
+random_numbers = Array.new(15) { rand(1..100) }
+bst = Tree.new(random_numbers)
 
-puts "Original tree:"
-tree.pretty_print
+puts "Is the tree balanced? #{bst.balanced?}"
+puts
 
-puts "\nInserting 9:"
-tree.insert(9)
-tree.pretty_print
+puts "Level Order:"
+bst.pretty_print { |node| print "#{node.data} " }
+puts
 
-puts "\nDeleting 6:"
-tree.delete(6)
-tree.pretty_print
+puts "Pre Order:"
+puts bst.preorder.join(', ')
+puts
 
-found_node = tree.find(10)
+puts "Post Order:"
+puts bst.postorder.join(', ')
+puts
 
-if found_node
-  puts "Node with value 6 found: #{found_node.data}"
-else
-  puts "Node with value 6 not found."
-end
+puts "In Order:"
+puts bst.inorder.join(', ')
+puts
 
-# Access the root of the tree
-root_node = tree.root
+# Unbalance the tree by adding several numbers > 100
+unbalanced_values = [110, 120, 130, 140, 150]
+unbalanced_values.each { |value| bst.insert(value) }
 
-# Print the visual representation of the tree
-tree.pretty_print
+puts "Is the tree balanced after adding values > 100? #{bst.balanced?}"
+puts
+
+# Rebalance the tree
+bst.rebalance
+
+puts "Is the tree balanced after rebalancing? #{bst.balanced?}"
+puts
+
+puts "Level Order after rebalancing:"
+bst.pretty_print { |node| print "#{node.data} " }
+puts
+
+puts "Pre Order after rebalancing:"
+puts bst.preorder.join(', ')
+puts
+
+puts "Post Order after rebalancing:"
+puts bst.postorder.join(', ')
+puts
+
+puts "In Order after rebalancing:"
+puts bst.inorder.join(', ')
