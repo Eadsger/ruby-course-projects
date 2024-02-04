@@ -14,12 +14,16 @@ class TicTacToe
   end
 
   def make_move(row, col)
-    if @board[row][col] == ' '
+    if valid_move?(row, col) && @board[row][col] == ' '
       @board[row][col] = @current_player
       switch_player
     else
-      puts "Invalid move! Cell already occupied. Try again."
+      puts "Invalid move! Please enter valid row and column values. Try again."
     end
+  end
+
+  def valid_move?(row, col)
+    (0..2).include?(row) && (0..2).include?(col)
   end
 
   def switch_player
