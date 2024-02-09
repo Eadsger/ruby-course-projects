@@ -1,9 +1,5 @@
-class King
-  attr_reader :color
-
-  def initialize(color)
-    @color = color
-  end
+class King < Piece
+  include Stepable
 
   def to_s
     color == :black ? "♔" : "♚"

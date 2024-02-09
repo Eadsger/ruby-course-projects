@@ -1,9 +1,5 @@
-class Pawn
-  attr_reader :color
-
-  def initialize(color)
-    @color = color
-  end
+class Pawn < Piece
+  include Stepable
 
   def to_s
     color == :black ? "♙" : "♟"
